@@ -1,15 +1,10 @@
 <h1 align="center">
-  ATUALIZADO: Como desenvolver uma pokedex em JavaScript
+ Pokedex em JavaScript
 </h1>
 
 <h6 align="center">Como construir uma pokedex com JavaScript puro, sem frameworks.</h6>
 </br>
 
-[![Como desenvolver uma pokedex em JavaScript](assets/img/banner-video-pokemon-javascript.jpg)](https://youtu.be/uTNKsgJHboo)
-
-<h2 align="center">Link para o vídeo</h2>
-
-<p align="center">🔗 https://youtu.be/uTNKsgJHboo</p>
 
 ---
 
