@@ -32,11 +32,11 @@ const getPokemonsType = async (pokeApiResults) => {
   const fulfilled = await getOnlyFullfilled({ arr: pokeApiResults, func: result => fetch(result.url) });
   const pokePrimisses = fulfilled.map(url => url.value.json());
   const pokemons = await Promise.all(pokePrimisses);
-  return pokemons.map(fulfilled => fulfilled.types.map(info => info.type.name));
+  return pokemons.map(fulfilled => fulfilled.types.map(info => DOMPurify.sanitize(info.type.name)));
 };
 
 const getPokemonsIds = pokeApiResults => pokeApiResults.map(({ url }) => {
-  const urlAsArray = url.split('/');
+  const urlAsArray = DOMPurify.sanitize(url.split('/'));
   return urlAsArray.at(urlAsArray.length - 2);
 });
 
@@ -66,8 +66,32 @@ const getPokemons = async () => {
   };
 };
 
+const renderPokemons = (pokemons) => {
+  const ul = document.querySelector('[data-js="pokemons-list"]');
+
+  pokemons.forEach(({id, name, types, imgUrl}) => {
+    const li = document.createElement('li');
+    const img = document.createElement('img');
+    const nameContainer = document.createElement('h2');
+    const typeContainer = document.createElement('p');
+    const [firstType] = types;
+
+    img.setAttribute('src', imgUrl);
+    img.setAttribute('alt', name);
+    li.setAttribute('class', `card ${firstType}`);
+    li.style.setProperty('--type-color', getTypeColor(firstType));
+
+
+    console.log(li);
+  });
+
+  console.log(ul);
+};
+
 const handlePageLoaded = async () => {
   const pokemons = await getPokemons();
+
+  renderPokemons(pokemons);
 
   console.log(pokemons);
 };
