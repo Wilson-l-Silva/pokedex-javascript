@@ -45,9 +45,26 @@ const getPokemonsImgs = async (ids) => {
   return fulfilled.map(response => response.value.url);
 };
 
+const paginationInfo = (() => {
+
+  const limit = 15;
+  let offset = 0;
+
+  const getLimit = () => limit;
+  const getOffset = () => offset;
+  const incrementOffset = () => offset += limit;
+
+  return {getLimit, getOffset, incrementOffset};
+})();
+//sinlgeton
+
+
+
+
 const getPokemons = async () => {
   try {
-    const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=15&offset=0');
+    const {getLimit, getOffset, incrementOffset} = paginationInfo;
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${getLimit()}&offset=${getOffset()}`);
 
     if (!response.ok) {
       throw new Error('Não foi possível obter as informações!');
@@ -59,6 +76,7 @@ const getPokemons = async () => {
     const imgs = await getPokemonsImgs(ids);
     const pokemons = ids.map((id, i) => ({ id, name: pokeApiResults[i].name, types: types[i], imgUrl: imgs[i] }));
 
+    incrementOffset();
     return pokemons;
 
   } catch (error) {
@@ -95,19 +113,31 @@ const renderPokemons = (pokemons) => {
   //console.log(ul);
 };
 
+const observerLastPokemon = (pokemonsObserver) => {
+  const lastPokemon = document.querySelector('[data-js="pokemons-list"]').lastChild;
+  pokemonsObserver.observe(lastPokemon);
+
+};
+
 const handleNextPokemonsRender = () => {
-  const pokemonsObserver = new IntersectionObserver(([lastPokemon], observer) => {
-    if(!lastPokemon.isIntersecting){
+  const pokemonsObserver = new IntersectionObserver(async ([lastPokemon], observer) => {
+    if (!lastPokemon.isIntersecting) {
       return;
     }
 
     observer.unobserve(lastPokemon.target);
-    
-    console.log('desobservou pela útilma vez a li');
-  });
 
-const lastPokemon = document.querySelector('[data-js="pokemons-list"]').lastChild;
-pokemonsObserver.observe(lastPokemon);
+    if(paginationInfo.getOffset() === 150){
+      return
+    }
+
+    const pokemons = await getPokemons();
+    renderPokemons(pokemons);
+    observerLastPokemon(pokemonsObserver);
+
+  }, {rootMargin: '500px'});
+
+  observerLastPokemon(pokemonsObserver);
 
 };
 
