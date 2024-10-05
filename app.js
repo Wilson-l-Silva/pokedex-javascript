@@ -95,11 +95,27 @@ const renderPokemons = (pokemons) => {
   //console.log(ul);
 };
 
+const handleNextPokemonsRender = () => {
+  const pokemonsObserver = new IntersectionObserver(([lastPokemon], observer) => {
+    if(!lastPokemon.isIntersecting){
+      return;
+    }
+
+    observer.unobserve(lastPokemon.target);
+    
+    console.log('desobservou pela útilma vez a li');
+  });
+
+const lastPokemon = document.querySelector('[data-js="pokemons-list"]').lastChild;
+pokemonsObserver.observe(lastPokemon);
+
+};
+
 const handlePageLoaded = async () => {
   const pokemons = await getPokemons();
 
   renderPokemons(pokemons);
-
+  handleNextPokemonsRender();
   console.log(pokemons);
 };
 
