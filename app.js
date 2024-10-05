@@ -45,27 +45,31 @@ const getPokemonsImgs = async (ids) => {
   return fulfilled.map(response => response.value.url);
 };
 
-const handlePageLoaded = async () => {
+const getPokemons = async () => {
   try {
     const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=15&offset=0');
 
     if (!response.ok) {
-      throw Error('Não foi possível obter as informações!');
+      throw new Error('Não foi possível obter as informações!');
     };
 
     const { results: pokeApiResults } = await response.json();
     const types = await getPokemonsType(pokeApiResults);
     const ids = getPokemonsIds(pokeApiResults);
     const imgs = await getPokemonsImgs(ids);
-    const pokemons = ids.map((id, i) => ({id, name: pokeApiResults[i].name, types: types[i], imgUrl: imgs[i]}));
+    const pokemons = ids.map((id, i) => ({ id, name: pokeApiResults[i].name, types: types[i], imgUrl: imgs[i] }));
 
-    
-
-    console.log(pokemons);
+    return pokemons;
 
   } catch (error) {
     console.log('Algo deu errado', error);
-  }
+  };
+};
+
+const handlePageLoaded = async () => {
+  const pokemons = await getPokemons();
+
+  console.log(pokemons);
 };
 
 handlePageLoaded();
