@@ -36,7 +36,7 @@ const getPokemonsType = async (pokeApiResults) => {
 };
 
 const getPokemonsIds = pokeApiResults => pokeApiResults.map(({ url }) => {
-  const urlAsArray = DOMPurify.sanitize(url.split('/'));
+  const urlAsArray = DOMPurify.sanitize(url).split('/');
   return urlAsArray.at(urlAsArray.length - 2);
 });
 
@@ -68,8 +68,10 @@ const getPokemons = async () => {
 
 const renderPokemons = (pokemons) => {
   const ul = document.querySelector('[data-js="pokemons-list"]');
+  const fragment = document.createDocumentFragment();
+  console.log(fragment);
 
-  pokemons.forEach(({id, name, types, imgUrl}) => {
+  pokemons.forEach(({ id, name, types, imgUrl }) => {
     const li = document.createElement('li');
     const img = document.createElement('img');
     const nameContainer = document.createElement('h2');
@@ -78,14 +80,19 @@ const renderPokemons = (pokemons) => {
 
     img.setAttribute('src', imgUrl);
     img.setAttribute('alt', name);
+    img.setAttribute('class', 'card-image');
     li.setAttribute('class', `card ${firstType}`);
     li.style.setProperty('--type-color', getTypeColor(firstType));
 
+    nameContainer.textContent = `${id}. ${name[0].toUpperCase()}${name.slice(1)}`;
+    typeContainer.textContent = types.length > 1 ? types.join(' | ') : firstType;
+    li.append(img, nameContainer, typeContainer);
 
-    console.log(li);
+    fragment.append(li);
   });
 
-  console.log(ul);
+  ul.append(fragment);
+  //console.log(ul);
 };
 
 const handlePageLoaded = async () => {
