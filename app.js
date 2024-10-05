@@ -57,8 +57,11 @@ const handlePageLoaded = async () => {
     const types = await getPokemonsType(pokeApiResults);
     const ids = getPokemonsIds(pokeApiResults);
     const imgs = await getPokemonsImgs(ids);
+    const pokemons = ids.map((id, i) => ({id, name: pokeApiResults[i].name, types: types[i], imgUrl: imgs[i]}));
 
-    console.log(imgs);
+    
+
+    console.log(pokemons);
 
   } catch (error) {
     console.log('Algo deu errado', error);
