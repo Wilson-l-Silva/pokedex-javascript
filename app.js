@@ -29,6 +29,11 @@ const getPokemonsType = async (pokeApiResults) => {
 
 };
 
+const getPokemonsIds = pokeApiResults => pokeApiResults.map(({url}) => {
+  const urlAsArray = url.split('/');
+  return urlAsArray.at(urlAsArray.length - 2);
+});
+
 const handlePageLoaded = async () => {
   try {
     const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=15&offset=0');
@@ -40,9 +45,9 @@ const handlePageLoaded = async () => {
     const {results: pokeApiResults} = await response.json();
     const types = await getPokemonsType(pokeApiResults);
 
-    
+    const ids = getPokemonsIds(pokeApiResults);
 
-    console.log(types);
+    console.log(ids);
 
   } catch (error) {
     console.log('Algo deu errado', error);    
